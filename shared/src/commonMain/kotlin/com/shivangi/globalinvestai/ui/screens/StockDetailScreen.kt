@@ -20,12 +20,12 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import coil3.compose.AsyncImage
 import com.shivangi.globalinvestai.domain.model.Stock
-import com.shivangi.globalinvestai.ui.viewmodel.StockDetailState
-import com.shivangi.globalinvestai.ui.viewmodel.StockDetailViewModel
+import com.shivangi.globalinvestai.ui.components.StockChart
 import com.shivangi.globalinvestai.ui.theme.Negative
 import com.shivangi.globalinvestai.ui.theme.Positive
+import com.shivangi.globalinvestai.ui.viewmodel.StockDetailState
+import com.shivangi.globalinvestai.ui.viewmodel.StockDetailViewModel
 import org.koin.core.parameter.parametersOf
 
 data class StockDetailScreen(val ticker: String) : Screen {
@@ -69,23 +69,42 @@ fun StockDetailContent(stock: Stock) {
     ) {
         item { StockHeader(stock) }
         item { Spacer(modifier = Modifier.height(24.dp)) }
-        item { AboutSection(stock) }
+        item {
+            StockChart(
+                modifier = Modifier.fillMaxWidth().height(200.dp),
+                isPositive = (stock.changePercent ?: 0.0) >= 0.0
+            )
+        }
         item { Spacer(modifier = Modifier.height(24.dp)) }
         item { KeyStatistics(stock) }
+        item { Spacer(modifier = Modifier.height(24.dp)) }
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Negative)
+                ) {
+                    Text("Sell")
+                }
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Positive)
+                ) {
+                    Text("Buy")
+                }
+            }
+        }
     }
 }
 
 @Composable
 fun StockHeader(stock: Stock) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-      /*  AsyncImage(
-            model = stock.logo,
-            contentDescription = "Stock Logo",
-            modifier = Modifier
-                .size(56.dp)
-                .clip(CircleShape)
-        )*/
-
         Spacer(modifier = Modifier.width(16.dp))
 
         Column(modifier = Modifier.weight(1f)) {
@@ -94,7 +113,7 @@ fun StockHeader(stock: Stock) {
         }
 
         Column(horizontalAlignment = Alignment.End) {
-            val priceText = stock.price?.let { "$${"%.2f".format(it)}" } ?: "-"
+            val priceText = stock.price?.let { "$${String.format("%.2f", it)}" } ?: "-"
             Text(priceText, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
 
             val change = stock.change ?: 0.0
@@ -102,22 +121,19 @@ fun StockHeader(stock: Stock) {
             val isPositive = changePercent >= 0.0
             val color = if (stock.changePercent == null) Color.Gray else if (isPositive) Positive else Negative
 
+            val changeText = if (stock.change != null && stock.changePercent != null) {
+                "${if (isPositive) "+" else ""}${String.format("%.2f", change)} (${String.format("%.2f", changePercent)}%)"
+            } else {
+                "-"
+            }
+
             Text(
-                text = "${if (stock.change != null && stock.changePercent != null) "${if (isPositive) "+" else ""}${"%.2f".format(change)} (${String.format("%.2f", changePercent)}%)" else "-"}",
+                text = changeText,
                 color = color,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold
             )
         }
-    }
-}
-
-@Composable
-fun AboutSection(stock: Stock) {
-    Column {
-        Text("About", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(stock.about ?: "-", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
     }
 }
 
@@ -128,10 +144,10 @@ fun KeyStatistics(stock: Stock) {
         Spacer(modifier = Modifier.height(16.dp))
 
         StatRow("Market Cap", stock.marketCap ?: "N/A")
-        StatRow("P/E Ratio", stock.peRatio?.let { "%.2f".format(it) } ?: "N/A")
-        StatRow("Dividend Yield", stock.dividendYield?.let { "%.2f".format(it) + "%" } ?: "N/A")
-        StatRow("52 Week High", stock.week52High?.let { "$${"%.2f".format(it)}" } ?: "N/A")
-        StatRow("52 Week Low", stock.week52Low?.let { "$${"%.2f".format(it)}" } ?: "N/A")
+        StatRow("P/E Ratio", stock.peRatio?.let { String.format("%.2f", it) } ?: "N/A")
+        StatRow("Dividend Yield", stock.dividendYield?.let { String.format("%.2f", it) + "%" } ?: "N/A")
+        StatRow("52 Week High", stock.week52High?.let { "$${String.format("%.2f", it)}" } ?: "N/A")
+        StatRow("52 Week Low", stock.week52Low?.let { "$${String.format("%.2f", it)}" } ?: "N/A")
     }
 }
 

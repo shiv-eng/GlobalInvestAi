@@ -1,16 +1,18 @@
 package com.shivangi.globalinvestai.ui.components
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.shivangi.globalinvestai.domain.model.Stock
 import com.shivangi.globalinvestai.ui.theme.Negative
 import com.shivangi.globalinvestai.ui.theme.Positive
@@ -22,9 +24,16 @@ fun StockListItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val alpha = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        alpha.animateTo(1f, animationSpec = tween(300))
+    }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .alpha(alpha.value)
             .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -32,16 +41,6 @@ fun StockListItem(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-          /*  AsyncImage(
-                model = stock.logo,
-                contentDescription = "${stock.name ?: "Logo"} Logo",
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-            )*/
-
-            Spacer(Modifier.width(16.dp))
-
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = stock.ticker ?: "-", fontWeight = FontWeight.Bold)
                 Text(
@@ -49,6 +48,12 @@ fun StockListItem(
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = 1
                 )
+            }
+
+            Spacer(Modifier.width(16.dp))
+
+            Box(modifier = Modifier.height(40.dp).width(80.dp)) {
+                StockChart(isPositive = (stock.changePercent ?: 0.0) >= 0.0)
             }
 
             Spacer(Modifier.width(16.dp))

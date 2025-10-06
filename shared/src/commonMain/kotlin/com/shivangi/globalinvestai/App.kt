@@ -12,6 +12,8 @@ import com.shivangi.globalinvestai.data.repository.StockRepositoryImpl
 import com.shivangi.globalinvestai.ui.components.BottomNav
 import com.shivangi.globalinvestai.ui.screens.*
 import com.shivangi.globalinvestai.ui.theme.AppTheme
+import com.shivangi.globalinvestai.ui.viewmodel.AiAssistantViewModel
+import com.shivangi.globalinvestai.ui.viewmodel.DiscoverViewModel
 import com.shivangi.globalinvestai.ui.viewmodel.HomeViewModel
 import com.shivangi.globalinvestai.ui.viewmodel.PortfolioViewModel
 import com.shivangi.globalinvestai.ui.viewmodel.StockDetailViewModel
@@ -25,6 +27,8 @@ val appModule = module {
     factory { HomeViewModel(get()) }
     factory { PortfolioViewModel(get()) }
     factory { params -> StockDetailViewModel(params.get(), get()) }
+    factory { DiscoverViewModel(get()) }
+    factory { AiAssistantViewModel() }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
@@ -66,4 +70,3 @@ fun App() {
         }
     }
 }
-

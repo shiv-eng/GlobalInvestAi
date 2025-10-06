@@ -20,28 +20,32 @@ import com.shivangi.globalinvestai.ui.theme.Positive
 @Composable
 fun AiPortfolioCard(portfolio: AiPortfolio, gradient: Brush) {
     Card(
-        modifier = Modifier.width(280.dp),
+        modifier = Modifier.width(280.dp).height(180.dp), // Set a fixed height
         shape = MaterialTheme.shapes.large,
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(
             modifier = Modifier
+                .fillMaxSize() // Fill the card's fixed size
                 .background(gradient)
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween // Distribute space
         ) {
-            Text(
-                portfolio.name,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                portfolio.description,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                modifier = Modifier.height(40.dp).padding(top = 4.dp)
-            )
-            Spacer(Modifier.height(16.dp))
+            Column {
+                Text(
+                    portfolio.name,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    portfolio.description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    modifier = Modifier.padding(top = 4.dp),
+                    maxLines = 2
+                )
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,

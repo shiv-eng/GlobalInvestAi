@@ -63,7 +63,8 @@ fun HomeScreenContent(uiState: HomeUiState, navigator: Navigator) {
                 item {
                     Text(
                         "AI-Managed Portfolios",
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
                     )
                 }
@@ -87,7 +88,8 @@ fun HomeScreenContent(uiState: HomeUiState, navigator: Navigator) {
                 item {
                     Text(
                         "Watchlist",
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 8.dp)
                     )
                 }
@@ -116,11 +118,11 @@ fun HomeHeader(portfolioValue: Double) {
             .padding(24.dp)
     ) {
         Column {
-            Text("Portfolio Value", color = TextPrimary.copy(alpha = 0.7f), fontSize = 14.sp)
+            Text("Portfolio Value", color = TextPrimary.copy(alpha = 0.7f), fontSize = 16.sp)
             Text(
                 "$${"%.2f".format(portfolioValue)}",
                 color = TextPrimary,
-                fontSize = 36.sp,
+                fontSize = 40.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(16.dp))
@@ -129,13 +131,14 @@ fun HomeHeader(portfolioValue: Double) {
                     imageVector = ArrowUpIcon,
                     contentDescription = "Up",
                     tint = TextPrimary,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(18.dp)
                 )
                 Spacer(Modifier.width(4.dp))
                 Text(
                     "$${"%.2f".format(totalGain)} (${"%.2f".format(totalGainPercent)}%) Today",
                     color = TextPrimary,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 16.sp
                 )
             }
         }
@@ -153,14 +156,15 @@ fun AiInsightCard(insight: AiInsight, modifier: Modifier = Modifier) {
                 imageVector = SparklesIcon,
                 contentDescription = "AI Insight",
                 tint = Primary,
-                modifier = Modifier.size(24.dp).padding(top = 4.dp)
+                modifier = Modifier.size(28.dp).padding(top = 4.dp)
             )
             Spacer(Modifier.width(12.dp))
             Column {
                 Text(
                     insight.title,
                     fontWeight = FontWeight.Bold,
-                    color = PrimaryDark
+                    color = PrimaryDark,
+                    fontSize = 18.sp
                 )
                 Text(
                     insight.content,
@@ -169,7 +173,7 @@ fun AiInsightCard(insight: AiInsight, modifier: Modifier = Modifier) {
                     modifier = Modifier.padding(top = 4.dp)
                 )
                 TextButton(onClick = { /* TODO */ }, contentPadding = PaddingValues(0.dp)) {
-                    Text("Explore Now", fontWeight = FontWeight.Bold, color = Primary)
+                    Text("Explore Now", fontWeight = FontWeight.Bold, color = Primary, fontSize = 16.sp)
                 }
             }
         }
