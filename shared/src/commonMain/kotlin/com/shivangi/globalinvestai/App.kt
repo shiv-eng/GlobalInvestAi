@@ -10,7 +10,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import com.shivangi.globalinvestai.data.repository.StockRepository
 import com.shivangi.globalinvestai.data.repository.StockRepositoryImpl
 import com.shivangi.globalinvestai.ui.components.BottomNav
-import com.shivangi.globalinvestai.ui.screens.LoginScreen
+import com.shivangi.globalinvestai.ui.screens.*
 import com.shivangi.globalinvestai.ui.theme.AppTheme
 import com.shivangi.globalinvestai.ui.viewmodel.HomeViewModel
 import com.shivangi.globalinvestai.ui.viewmodel.PortfolioViewModel
@@ -40,7 +40,16 @@ fun App() {
     PreComposeApp {
         AppTheme {
             Navigator(LoginScreen) { navigator ->
-                val showBottomBar = navigator.lastItem !is LoginScreen
+                // Define screens that should not have a bottom bar
+                val screensWithoutBottomNav = listOf(
+                    LoginScreen::class,
+                    OnboardingScreen::class,
+                    RegistrationScreen::class,
+                    KycPanAadhaarScreen::class,
+                    KycDigiLockerScreen::class,
+                    KycSuccessScreen::class
+                )
+                val showBottomBar = navigator.lastItem::class !in screensWithoutBottomNav
 
                 Scaffold(
                     bottomBar = {
@@ -57,3 +66,4 @@ fun App() {
         }
     }
 }
+
