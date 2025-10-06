@@ -29,6 +29,7 @@ import com.shivangi.globalinvestai.ui.theme.Positive
 import org.koin.core.parameter.parametersOf
 
 data class StockDetailScreen(val ticker: String) : Screen {
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
@@ -76,23 +77,33 @@ fun StockDetailContent(stock: Stock) {
 
 @Composable
 fun StockHeader(stock: Stock) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        AsyncImage(
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+      /*  AsyncImage(
             model = stock.logo,
             contentDescription = "Stock Logo",
-            modifier = Modifier.size(56.dp).clip(CircleShape)
-        )
+            modifier = Modifier
+                .size(56.dp)
+                .clip(CircleShape)
+        )*/
+
         Spacer(modifier = Modifier.width(16.dp))
+
         Column(modifier = Modifier.weight(1f)) {
-            Text(stock.ticker, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            Text(stock.name, style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+            Text(stock.ticker ?: "-", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text(stock.name ?: "-", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
         }
+
         Column(horizontalAlignment = Alignment.End) {
-            Text("$${"%.2f".format(stock.price)}", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            val isPositive = stock.changePercent >= 0
-            val color = if (isPositive) Positive else Negative
+            val priceText = stock.price?.let { "$${"%.2f".format(it)}" } ?: "-"
+            Text(priceText, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+
+            val change = stock.change ?: 0.0
+            val changePercent = stock.changePercent ?: 0.0
+            val isPositive = changePercent >= 0.0
+            val color = if (stock.changePercent == null) Color.Gray else if (isPositive) Positive else Negative
+
             Text(
-                "${if (isPositive) "+" else ""}${"%.2f".format(stock.change)} (${"%.2f".format(stock.changePercent)}%)",
+                text = "${if (stock.change != null && stock.changePercent != null) "${if (isPositive) "+" else ""}${"%.2f".format(change)} (${String.format("%.2f", changePercent)}%)" else "-"}",
                 color = color,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold
@@ -106,7 +117,7 @@ fun AboutSection(stock: Stock) {
     Column {
         Text("About", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
-        Text(stock.about, style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+        Text(stock.about ?: "-", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
     }
 }
 
@@ -115,19 +126,23 @@ fun KeyStatistics(stock: Stock) {
     Column {
         Text("Key Statistics", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(16.dp))
-        StatRow("Market Cap", stock.marketCap)
-        StatRow("P/E Ratio", stock.peRatio?.toString() ?: "N/A")
+
+        StatRow("Market Cap", stock.marketCap ?: "N/A")
+        StatRow("P/E Ratio", stock.peRatio?.let { "%.2f".format(it) } ?: "N/A")
         StatRow("Dividend Yield", stock.dividendYield?.let { "%.2f".format(it) + "%" } ?: "N/A")
-        StatRow("52 Week High", "$${"%.2f".format(stock.week52High)}")
-        StatRow("52 Week Low", "$${"%.2f".format(stock.week52Low)}")
+        StatRow("52 Week High", stock.week52High?.let { "$${"%.2f".format(it)}" } ?: "N/A")
+        StatRow("52 Week Low", stock.week52Low?.let { "$${"%.2f".format(it)}" } ?: "N/A")
     }
 }
 
 @Composable
 fun StatRow(label: String, value: String) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(label, color = Color.Gray, style = MaterialTheme.typography.bodyMedium)
         Text(value, fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)

@@ -19,7 +19,6 @@ kotlin {
     }
 
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
@@ -30,25 +29,34 @@ kotlin {
     }
 
     sourceSets {
-        commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.koin.core)
-            implementation(libs.voyager.navigator)
-            implementation(libs.voyager.koin)
-            implementation(libs.voyager.transitions)
-            implementation(libs.coil.compose.core)
-            implementation(libs.coil.network.ktor)
-            implementation(libs.vico.compose)
-            implementation(libs.vico.core)
-            implementation(libs.precompose)
-            implementation(libs.precompose.viewmodel)
+        val commonMain by getting {
+            dependencies {
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material3)
+                implementation(compose.materialIconsExtended)
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose)
+                implementation(libs.voyager.navigator)
+                implementation(libs.voyager.koin)
+                implementation(libs.voyager.transitions)
+                implementation(libs.coil.compose.core)
+                implementation(libs.coil.network.ktor)
+                implementation(libs.vico.compose)
+                implementation(libs.vico.core)
+                implementation(libs.precompose)
+                implementation(libs.precompose.viewmodel)
+                implementation(libs.vico.compose)
+                implementation(libs.vico.core)
+                implementation("io.coil-kt.coil3:coil-compose-core:3.0.0-alpha06")
+            }
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
+
+        val commonTest by getting {
+            dependencies {
+                implementation(libs.kotlin.test)
+            }
         }
     }
 }
@@ -56,9 +64,11 @@ kotlin {
 android {
     namespace = "com.shivangi.globalinvestai"
     compileSdk = 34
+
     defaultConfig {
         minSdk = 24
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8

@@ -11,53 +11,48 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
-import com.shivangi.globalinvestai.domain.model.PortfolioHolding
+import cafe.adriel.voyager.koin.getScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.shivangi.globalinvestai.ui.components.StockListItem
 import com.shivangi.globalinvestai.ui.viewmodel.PortfolioViewModel
-import moe.tlaster.precompose.koin.koinViewModel
 
 object PortfolioScreen : Screen {
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
-        PortfolioScreenContent()
-    }
-}
+        val navigator = LocalNavigator.currentOrThrow
+        val viewModel = getScreenModel<PortfolioViewModel>()
+        val holdings by viewModel.holdingsState.collectAsState()
+        val totalValue = holdings.sumOf { it.totalValue }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PortfolioScreenContent() {
-    val viewModel = koinViewModel(vmClass = PortfolioViewModel::class)
-    val holdings by viewModel.holdingsState.collectAsState()
-    // Corrected the sumOf ambiguity by explicitly typing the lambda parameter
-    val totalValue = holdings.sumOf { holding -> holding.totalValue }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("My Portfolio") })
-        }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(paddingValues),
-            contentPadding = PaddingValues(16.dp)
-        ) {
-            item {
-                Text(
-                    "Total Value: $${"%.2f".format(totalValue)}",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+        Scaffold(
+            topBar = {
+                TopAppBar(title = { Text("My Portfolio") })
             }
-            items(holdings) { holding ->
-                // This was previously incorrect, now correctly defined
-                HoldingItem(holding)
-                Spacer(Modifier.height(12.dp))
+        ) { paddingValues ->
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(paddingValues),
+                contentPadding = PaddingValues(16.dp)
+            ) {
+                item {
+                    Text(
+                        "Total Value: $${(totalValue)}",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+                items(holdings) { holding ->
+                    StockListItem(
+                        stock = holding.stock,
+                        onClick = {
+                            navigator.push(StockDetailScreen(holding.stock.ticker))
+                        }
+                    )
+                    Spacer(Modifier.height(12.dp))
+                }
             }
         }
     }
-}
-
-@Composable
-fun HoldingItem(holding: PortfolioHolding) {
-    StockListItem(stock = holding.stock, onClick = { /* TODO: Navigate to detail */ })
 }

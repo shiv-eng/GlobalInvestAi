@@ -18,30 +18,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.shivangi.globalinvestai.domain.model.AiInsight
 import com.shivangi.globalinvestai.ui.components.*
 import com.shivangi.globalinvestai.ui.theme.*
 import com.shivangi.globalinvestai.ui.viewmodel.HomeUiState
 import com.shivangi.globalinvestai.ui.viewmodel.HomeViewModel
-import moe.tlaster.precompose.koin.koinViewModel
+import org.koin.compose.koinInject
 
-// Each Screen is now self-contained
+
 object HomeScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        // Correctly gets the ViewModel using precompose-koin integration
-        val viewModel = koinViewModel(vmClass = HomeViewModel::class)
+        val viewModel: HomeViewModel = koinInject()
         val uiState by viewModel.uiState.collectAsState()
 
-        // This is the content that was previously causing "Unresolved Reference"
         HomeScreenContent(uiState = uiState, navigator = navigator)
     }
 }
 
 @Composable
-fun HomeScreenContent(uiState: HomeUiState, navigator: cafe.adriel.voyager.navigator.Navigator) {
+fun HomeScreenContent(uiState: HomeUiState, navigator: Navigator) {
     when (uiState) {
         is HomeUiState.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -103,8 +102,6 @@ fun HomeScreenContent(uiState: HomeUiState, navigator: cafe.adriel.voyager.navig
         }
     }
 }
-
-// These composables are now correctly placed within the same file or are properly imported.
 @Composable
 fun HomeHeader(portfolioValue: Double) {
     val totalGain = 1250.75

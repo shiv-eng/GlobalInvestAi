@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.shivangi.globalinvestai.ui.navigation.LoginScreen
 
 object ProfileScreen : Screen {
     @Composable

@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.transitions.SlideTransition
 import com.shivangi.globalinvestai.data.repository.StockRepository
 import com.shivangi.globalinvestai.data.repository.StockRepositoryImpl
 import com.shivangi.globalinvestai.ui.components.BottomNav
@@ -18,6 +17,7 @@ import com.shivangi.globalinvestai.ui.viewmodel.PortfolioViewModel
 import com.shivangi.globalinvestai.ui.viewmodel.StockDetailViewModel
 import moe.tlaster.precompose.PreComposeApp
 import org.koin.core.context.startKoin
+import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
 val appModule = module {
@@ -27,15 +27,17 @@ val appModule = module {
     factory { params -> StockDetailViewModel(params.get(), get()) }
 }
 
-fun initKoin() {
+fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
     startKoin {
+        appDeclaration()
         modules(appModule)
     }
 }
 
+
 @Composable
 fun App() {
-    PreComposeApp { // Use PreComposeApp at the root
+    PreComposeApp {
         AppTheme {
             Navigator(LoginScreen) { navigator ->
                 val showBottomBar = navigator.lastItem !is LoginScreen
@@ -48,7 +50,7 @@ fun App() {
                     }
                 ) { paddingValues ->
                     Box(modifier = Modifier.padding(paddingValues)) {
-                        CurrentScreen() // Use CurrentScreen from Voyager
+                        CurrentScreen()
                     }
                 }
             }

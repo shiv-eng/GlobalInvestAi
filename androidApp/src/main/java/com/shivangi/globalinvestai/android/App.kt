@@ -8,6 +8,9 @@ import org.koin.android.ext.koin.androidLogger
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
-        initKoin()
+        initKoin{
+            androidContext(this@App)
+            androidLogger()
+        }
     }
 }

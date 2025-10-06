@@ -8,13 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.shivangi.globalinvestai.domain.model.Stock
 import com.shivangi.globalinvestai.ui.theme.Negative
 import com.shivangi.globalinvestai.ui.theme.Positive
+import kotlin.math.roundToInt
 
 @Composable
 fun StockListItem(
@@ -32,27 +32,46 @@ fun StockListItem(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // This is the corrected, public API for Coil
-            AsyncImage(
+          /*  AsyncImage(
                 model = stock.logo,
-                contentDescription = "${stock.name} Logo",
-                contentScale = ContentScale.Crop,
+                contentDescription = "${stock.name ?: "Logo"} Logo",
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-            )
+            )*/
+
             Spacer(Modifier.width(16.dp))
+
             Column(modifier = Modifier.weight(1f)) {
-                Text(stock.ticker, fontWeight = FontWeight.Bold)
-                Text(stock.name, style = MaterialTheme.typography.bodySmall, maxLines = 1)
-            }
-            Spacer(Modifier.width(16.dp))
-            Column(horizontalAlignment = Alignment.End) {
-                Text("$${"%.2f".format(stock.price)}", fontWeight = FontWeight.SemiBold)
-                val isPositive = stock.changePercent >= 0
+                Text(text = stock.ticker ?: "-", fontWeight = FontWeight.Bold)
                 Text(
-                    "${if (isPositive) "+" else ""}${"%.2f".format(stock.changePercent)}%",
-                    color = if (isPositive) Positive else Negative,
+                    text = stock.name ?: "-",
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1
+                )
+            }
+
+            Spacer(Modifier.width(16.dp))
+
+            Column(horizontalAlignment = Alignment.End) {
+                val priceText = stock.price?.let {
+                    "$" + ((it * 100.0).roundToInt() / 100.0).toString()
+                } ?: "-"
+                Text(priceText, fontWeight = FontWeight.SemiBold)
+
+                val cp = stock.changePercent
+                val changeText = if (cp != null) {
+                    val sign = if (cp >= 0) "+" else ""
+                    val rounded = (cp * 100.0).roundToInt() / 100.0
+                    "$sign$rounded%"
+                } else {
+                    "-"
+                }
+
+                val isPositive = (stock.changePercent ?: 0.0) >= 0.0
+                Text(
+                    changeText,
+                    color = if (cp == null) MaterialTheme.colorScheme.onSurface else if (isPositive) Positive else Negative,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
